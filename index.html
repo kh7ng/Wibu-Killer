@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ WIBU EXTERMINATOR 9000 ⚡</title>
+<style>
+  :root{
+    --neon:#ff2d75;
+    --cyan:#00f0ff;
+    --green:#39ff14;
+    --dark:#08010f;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:'Segoe UI', 'Consolas', monospace;
+    background:var(--dark);
+    color:#fff;
+    overflow:hidden;
+    user-select:none;
+    cursor:crosshair;
+  }
+  #bg{
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(255,45,117,.18), transparent 55%),
+      radial-gradient(ellipse at 80% 70%, rgba(0,240,255,.15), transparent 55%),
+      repeating-linear-gradient(0deg, transparent 0 39px, rgba(0,240,255,.06) 39px 40px);
+    animation:bgShift 12s ease-in-out infinite alternate;
+  }
+  @keyframes bgShift{ from{ filter:hue-rotate(0deg);} to{ filter:hue-rotate(40deg);} }
+  #scanlines{
+    position:fixed; inset:0; z-index:50; pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 2px, transparent 2px 4px);
+    mix-blend-mode:multiply;
+  }
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:10;
+    text-align:center; padding:14px 10px 8px;
+    background:linear-gradient(180deg, rgba(0,0,0,.85), transparent);
+  }
+  h1.glitch{
+    font-size:clamp(22px, 4.5vw, 44px);
+    letter-spacing:4px;
+    color:#fff;
+    text-shadow:0 0 8px var(--neon), 0 0 24px var(--neon), 3px 0 var(--cyan), -3px 0 #ff2d75;
+    position:relative;
+    animation:jitter 3s infinite;
+  }
+  @keyframes jitter{
+    0%,88%,100%{ transform:translate(0,0); }
+    90%{ transform:translate(-2px,1px) skewX(3deg); }
+    92%{ transform:translate(2px,-1px); }
+    94%{ transform:translate(-1px,0) skewX(-2deg); }
+  }
+  .subtitle{
+    margin-top:6px;
+    font-size:clamp(10px, 1.6vw, 14px);
+    letter-spacing:3px;
+    color:var(--cyan);
+    text-shadow:0 0 8px var(--cyan);
+  }
+  main#stage{ position:fixed; inset:0; z-index:5; }
+  section{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .hidden{ display:none !important; }
+
+  /* ===== INTRO ===== */
+  #intro p.desc{
+    max-width:640px; text-align:center; line-height:1.7;
+    font-size:clamp(13px, 2vw, 17px); color:#d8f6ff;
+    text-shadow:0 0 6px rgba(0,240,255,.6);
+    padding:0 20px;
+  }
+  #startBtn{
+    margin-top:34px;
+    font-family:inherit;
+    font-size:clamp(18px, 3vw, 26px);
+    font-weight:900; letter-spacing:3px;
+    padding:18px 40px;
+    color:#fff;
+    background:linear-gradient(180deg, #ff2d75, #a3004b);
+    border:3px solid #fff;
+    border-radius:14px;
+    cursor:pointer;
+    text-shadow:0 2px 4px rgba(0,0,0,.6);
+    box-shadow:0 0 25px var(--neon), inset 0 0 18px rgba(255,255,255,.25);
+    animation:pulse 1.1s ease-in-out infinite;
+    transition:transform .08s;
+  }
+  #startBtn:hover{ transform:scale(1.06); }
+  #startBtn:active{ transform:scale(.95); }
+  @keyframes pulse{ 50%{ box-shadow:0 0 55px var(--neon), inset 0 0 18px rgba(255,255,255,.25);} }
+  .warning{
+    margin-top:22px; font-size:12px; letter-spacing:2px;
+    color:#ffd166; opacity:.85; text-align:center; padding:0 20px;
+  }
+
+  /* ===== SCAN ===== */
+  .radar{
+    position:relative; width:min(46vmin, 320px); aspect-ratio:1;
+    border-radius:50%;
+    border:2px solid var(--green);
+    box-shadow:0 0 30px rgba(57,255,20,.4), inset 0 0 30px rgba(57,255,20,.15);
+  }
+  .radar .ring{ position:absolute; inset:0; border-radius:50%; border:1px solid rgba(57,255,20,.4); }
+  .radar .ring.r1{ inset:12%; } .radar .ring.r2{ inset:25%; } .radar .ring.r3{ inset:37.5%; }
+  .radar .cross{ position:absolute; inset:0; }
+  .radar .cross::before, .radar .cross::after{
+    content:''; position:absolute; background:rgba(57,255,20,.35);
+  }
+  .radar .cross::before{ left:50%; top:0; bottom:0; width:1px; }
+  .radar .cross::after{ top:50%; left:0; right:0; height:1px; }
+  .radar .sweep{
+    position:absolute; inset:0; border-radius:50%;
+    background:conic-gradient(from 0deg, rgba(57,255,20,.65), transparent 70deg);
+    animation:spin 1.6s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+  .blip{
+    position:absolute; width:10px; height:10px; border-radius:50%;
+    background:var(--neon); box-shadow:0 0 12px var(--neon);
+    animation:blipFade 1.6s linear infinite;
+  }
+  @keyframes blipFade{ 0%{opacity:1;} 70%{opacity:1;} 100%{opacity:0;} }
+  #scanLog{
+    margin-top:26px; width:min(92vw, 620px); height:180px;
+    overflow:hidden;
+    font-size:clamp(11px, 1.6vw, 14px);
+    color:var(--green);
+    text-shadow:0 0 6px rgba(57,255,20,.7);
+    white-space:pre-wrap;
+  }
+
+  /* ===== HUNT ===== */
+  #hud{
+    position:fixed; top:70px; left:0; right:0; z-index:20;
+    display:flex; justify-content:center; gap:clamp(10px, 3vw, 34px);
+    font-size:clamp(12px, 2vw, 18px); font-weight:800; letter-spacing:1px;
+    pointer-events:none;
+  }
+  .hud-item{ padding:6px 14px; border:1px solid rgba(0,240,255,.5); border-radius:8px;
+    background:rgba(0,0,0,.45); text-shadow:0 0 8px currentColor; }
+  #scoreBox{ color:var(--neon); } #comboBox{ color:#ffd166; }
+  #missBox{ color:#ff5555; } #timerBox{ color:var(--cyan); }
+  #battlefield{ position:absolute; inset:0; }
+  .target{
+    position:absolute;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    background:rgba(10,0,20,.75);
+    border:2px solid var(--cyan);
+    border-radius:12px;
+    padding:6px 10px;
+    cursor:pointer;
+    animation:spawnIn .25s ease-out, bob 2s ease-in-out infinite alternate;
+    box-shadow:0 0 14px rgba(0,240,255,.5);
+    font-family:inherit; color:#fff;
+    transition:transform .08s;
+  }
+  .target:hover{ transform:scale(1.1); }
+  .target .emoji{ font-size:clamp(22px, 4vw, 34px); }
+  .target .name{
+    font-size:clamp(9px, 1.4vw, 12px); color:var(--cyan);
+    max-width:130px; text-align:center; line-height:1.25;
+  }
+  @keyframes spawnIn{ from{ transform:scale(0); opacity:0;} }
+  @keyframes bob{ from{ margin-top:-6px;} to{ margin-top:6px;} }
+  .target.escaped{ border-color:#ff5555; opacity:.15; }
+  .particle{ position:fixed; z-index:40; pointer-events:none; font-size:24px; will-change:transform,opacity; }
+  .kanji{
+    position:fixed; z-index:41; pointer-events:none;
+    font-size:clamp(50px, 9vw, 110px); font-weight:900;
+    color:#ff2d75; text-shadow:0 0 30px #ff2d75;
+    animation:kanjiPop .8s ease-out forwards;
+  }
+  @keyframes kanjiPop{
+    0%{ transform:scale(0) rotate(-30deg); opacity:0;}
+    30%{ transform:scale(1.4) rotate(8deg); opacity:1;}
+    100%{ transform:scale(2.2) rotate(20deg); opacity:0;}
+  }
+  .popText{
+    position:fixed; z-index:41; pointer-events:none;
+    font-weight:900; font-size:clamp(13px, 2.2vw, 20px); letter-spacing:1px;
+    color:#ffd166; text-shadow:0 0 10px #ff8800;
+    animation:popUp .9s ease-out forwards; white-space:nowrap;
+  }
+  @keyframes popUp{ 0%{ transform:translateY(0); opacity:1;} 100%{ transform:translateY(-70px); opacity:0;} }
+  body.shake{ animation:shake .3s linear; }
+  @keyframes shake{
+    0%,100%{ transform:translate(0,0);}
+    20%{ transform:translate(-8px,4px);}
+    40%{ transform:translate(7px,-5px);}
+    60%{ transform:translate(-5px,-3px);}
+    80%{ transform:translate(5px,4px);}
+  }
+
+  /* ===== BOSS ===== */
+  #bossWrap{ position:absolute; inset:0; }
+  #bossName{
+    position:fixed; top:120px; left:0; right:0; text-align:center; z-index:22;
+    font-size:clamp(16px, 3vw, 28px); font-weight:900; letter-spacing:4px;
+    color:#ff2d75; text-shadow:0 0 16px #ff2d75; pointer-events:none;
+  }
+  #bossHpWrap{
+    position:fixed; top:160px; left:50%; transform:translateX(-50%);
+    width:min(70vw, 520px); height:22px; z-index:22;
+    border:2px solid #fff; border-radius:12px; overflow:hidden;
+    background:rgba(0,0,0,.6); box-shadow:0 0 16px rgba(255,45,117,.6);
+    pointer-events:none;
+  }
+  #bossHpFill{
+    height:100%; width:100%;
+    background:linear-gradient(90deg, #ff2d75, #ff9d00);
+    transition:width .15s;
+  }
+  #bossEmoji{
+    position:fixed; z-index:21;
+    font-size:clamp(70px, 14vw, 150px);
+    cursor:pointer;
+    filter:drop-shadow(0 0 25px #ff2d75);
+    transition:transform .6s ease-in-out;
+    left:50%; top:50%;
+    animation:bossPulse 1s ease-in-out infinite;
+  }
+  @keyframes bossPulse{ 50%{ transform:translate(-50%,-50%) scale(1.08);} }
+  .bossHit{ filter:drop-shadow(0 0 25px #fff) brightness(3) !important; }
+
+  /* ===== TWIST ===== */
+  #twistText{
+    text-align:center; font-size:clamp(16px, 3vw, 28px); font-weight:800;
+    line-height:2; padding:0 24px; letter-spacing:1px;
+    text-shadow:0 0 12px currentColor;
+  }
+  #countdown{
+    margin-top:30px; font-size:clamp(60px, 12vw, 130px); font-weight:900;
+    color:#ff2d75; text-shadow:0 0 40px #ff2d75;
+  }
+  #finalMsg{ text-align:center; max-width:760px; padding:0 24px; }
+  #finalMsg .big{
+    font-size:clamp(24px, 5vw, 44px); font-weight:900; letter-spacing:2px;
+    color:#ffd166; text-shadow:0 0 20px #ff8800; line-height:1.4;
+  }
+  #finalMsg .stats{
+    margin-top:18px; font-size:clamp(13px, 2vw, 17px); line-height:1.9; color:#d8f6ff;
+  }
+  #replayBtn{
+    margin-top:30px;
+    font-family:inherit; font-size:18px; font-weight:900; letter-spacing:2px;
+    padding:14px 34px; color:#08010f;
+    background:linear-gradient(180deg, #00f0ff, #0080aa);
+    border:2px solid #fff; border-radius:12px; cursor:pointer;
+    box-shadow:0 0 20px var(--cyan);
+  }
+  #replayBtn:hover{ transform:scale(1.05); }
+
+  #muteBtn{
+    position:fixed; bottom:14px; right:14px; z-index:60;
+    width:46px; height:46px; border-radius:50%;
+    background:rgba(0,0,0,.55); color:#fff; font-size:20px;
+    border:2px solid rgba(0,240,255,.6); cursor:pointer;
+  }
+  footer{
+    position:fixed; bottom:10px; left:0; right:0; z-index:10;
+    text-align:center; font-size:11px; color:rgba(255,255,255,.55); letter-spacing:1px;
+    pointer-events:none;
+  }
+  #flash{
+    position:fixed; inset:0; z-index:70; background:#fff; opacity:0; pointer-events:none;
+  }
+  #flash.go{ animation:flashOut 1s ease-out forwards; }
+  @keyframes flashOut{ 0%{opacity:1;} 100%{opacity:0;} }
+</style>
+</head>
+<body>
+  <div id="bg"></div>
+  <div id="flash"></div>
+
+  <header>
+    <h1 class="glitch" data-text="WIBU EXTERMINATOR 9000">WIBU EXTERMINATOR 9000</h1>
+    <div class="subtitle">HỆ THỐNG HỦY DIỆT • XÓA SỔ • RỬA XỔ WIBU — PHIÊN BẢN 9.0.0</div>
+  </header>
+
+  <main id="stage">
+    <!-- INTRO -->
+    <section id="intro">
+      <p class="desc">
+        🚨 <b>CẢNH BÁO CẤP ĐỘ RED</b> 🚨<br>
+        Hệ thống đã phát hiện <b>số lượng wibu tăng vọt</b> trong khu vực.<br>
+        Nhiệm vụ của bạn: <b>quét rada → tiêu diệt → xóa sổ</b> mọi wibu lùn lũn<br>
+        trước khi chúng kịp gọi ai là "senpai".<br><br>
+        ⚔️ Sẵn sàng chưa, Chiến Binh 3D?
+      </p>
+      <button id="startBtn">🚨 KÍCH HOẠT HỆ THỐNG HỦY DIỆT 🚨</button>
+      <div class="warning">※ Trách nhiệm pháp lý: Mọi wibu bị tiêu diệt sẽ được hồi sinh tại Isekai gần nhất.</div>
+    </section>
+
+    <!-- SCAN -->
+    <section id="scan" class="hidden">
+      <div class="radar">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="cross"></div>
+        <div class="sweep"></div>
+      </div>
+      <pre id="scanLog"></pre>
+    </section>
+
+    <!-- HUNT -->
+    <section id="hunt" class="hidden">
+      <div id="battlefield"></div>
+    </section>
+
+    <!-- BOSS -->
+    <section id="boss" class="hidden">
+      <div id="bossWrap"></div>
+    </section>
+
+    <!-- TWIST -->
+    <section id="twist" class="hidden">
+      <div id="twistText"></div>
+      <div id="countdown" class="hidden"></div>
+      <div id="finalMsg" class="hidden">
+        <div class="big">💥 HỦY DIỆT THẤT BẠI 💥<br>KẾT LUẬN: WIBU MÃI MÃI LÀ WIBU</div>
+        <div class="stats" id="statLine"></div>
+        <button id="replayBtn">🔁 NẠP ĐẠN & CHƠI LẠI</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- HUD (hiện khi battle) -->
+  <div id="hud" class="hidden">
+    <div class="hud-item" id="scoreBox">ĐIỂM: 0</div>
+    <div class="hud-item" id="comboBox">COMBO: x0</div>
+    <div class="hud-item" id="missBox">TRỐN THOÁT: 0</div>
+    <div class="hud-item" id="timerBox">⏱ 30s</div>
+  </div>
+
+  <div id="bossName" class="hidden">☠️ BOSS CUỐI: ĐẠI TRƯỞNG LÃO HỘI WIBU ☠️</div>
+  <div id="bossHpWrap" class="hidden"><div id="bossHpFill"></div></div>
+  <div id="bossEmoji" class="hidden">🦊</div>
+
+  <footer>Ứng dụng giải trí 100% — Không wibu nào bị tổn hại thật. Wibu không có tội, wibu chỉ có waifu :3</footer>
+  <button id="muteBtn" title="Bật/tắt âm thanh">🔊</button>
+  <div id="scanlines"></div>
+
+<script>
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const rand = (a,b) => Math.random()*(b-a)+a;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+/* ================= AUDIO (WebAudio, không cần file) ================= */
+let actx = null, muted = false;
+function ctx(){ if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)(); return actx; }
+function tone(f0, f1, dur, type='square', vol=0.15){
+  if(muted) return;
+  try{
+    const c = ctx(), t = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(Math.max(f0,1), t);
+    o.frequency.exponentialRampToValueAtTime(Math.max(f1,1), t+dur);
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    o.connect(g).connect(c.destination);
+    o.start(t); o.stop(t+dur+0.02);
+  }catch(e){}
+}
+function noiseBoom(dur=0.4, vol=0.35){
+  if(muted) return;
+  try{
+    const c = ctx(), t = c.currentTime;
+    const len = Math.floor(c.sampleRate*dur);
+    const buf = c.createBuffer(1, len, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i] = (Math.random()*2-1) * (1 - i/len);
+    const src = c.createBufferSource(); src.buffer = buf;
+    const g = c.createGain(); g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    const f = c.createBiquadFilter(); f.type='lowpass';
+    f.frequency.setValueAtTime(1200, t);
+    f.frequency.exponentialRampToValueAtTime(80, t+dur);
+    src.connect(f).connect(g).connect(c.destination);
+    src.start(t);
+  }catch(e){}
+}
+const sfx = {
+  pew(){ tone(1100, 250, 0.12, 'sawtooth', 0.18); },
+  boom(){ noiseBoom(0.45, 0.4); tone(180, 40, 0.4, 'sine', 0.3); },
+  bigBoom(){ noiseBoom(0.9, 0.6); tone(120, 30, 0.9, 'sine', 0.45); },
+  miss(){ tone(400, 120, 0.35, 'triangle', 0.2); },
+  alarm(){ tone(880, 880, 0.15, 'square', 0.2); setTimeout(()=>tone(660, 660, 0.15, 'square', 0.2), 180); },
+  click(){ tone(900, 900, 0.05, 'square', 0.12); },
+  count(){ tone(600, 600, 0.12, 'square', 0.25); },
+  scan(){ tone(300, 900, 0.2, 'sine', 0.08); },
+};
+$('#muteBtn').addEventListener('click', () => {
+  muted = !muted;
+  $('#muteBtn').textContent = muted ? '🔇' : '🔊';
+});
+
+/* ================= DATA ================= */
+const WIBUS = [
+  { e:'🍥', n:'Narutobaby — đợi Hokage từ 2009' },
+  { e:'🗡️', n:'Sở hữu dao katana sỉn màu' },
+  { e:'💙', n:'Chồng của Hatsune Miku' },
+  { e:'🏴‍☠️', n:'Xem One Piece từ tập 1... lần 3' },
+  { e:'😢', n:'Vẫn chờ senpai notice mình' },
+  { e:'🔑', n:'Bẻ khóa Crunchyroll chuyên nghiệp' },
+  { e:'📚', n:'Học tiếng Nhật qua... tài liệu tối thượng' },
+  { e:'🦵', n:'Thờ chân gối tay miệng ikigai' },
+  { e:'😱', n:'Vô thức nói "sugoi" ngoài đời' },
+  { e:'💘', n:'Waifu 2D > người thật' },
+  { e:'🍜', n:'Ăn mì包instant tự nhận là ramen Ichiraku' },
+  { e:'🌸', n:'Sakura nằm trong sổ tiết kiệm' },
+  { e:'🎌', n:'Cờ Nhật treo đầu giường 10 năm' },
+  { e:'👁️', n:'Mở Sharingan khi đói cơm' },
+  { e:'🥋', n:'Tập nhảy dance anime trong phòng kín' },
+  { e:'🤖', n:'Bí danh: Konichiwa_47' },
+];
+const KILL_PHRASES = [
+  'HỦY DIỆT!', 'XÓA SỔ!', 'RỬA XỔ!', 'BAY MÀU!',
+  'GOMEN NASAI!', 'KAMEHAME— BỤM!', 'SENPAI ĐÃ TỪ!',
+  'ÁNH SÁNG THANH LỌC!', 'LÊN THUYỀN ISEKAI!',
+];
+const SCAN_LINES = [
+  '[SYS] Khởi động Giao thức HỦY DIỆT WIBU v9.0...',
+  '[SYS] Nạp năng lượng: Nắm Đấm Rồng Siêu Cấp... OK',
+  '[SYS] Vũ khí: Laser Kamehame... OK',
+  '[SCAN] Quét C:\\Videos\\Anime ... PHÁT HIỆN 4.742 TẬP 😱',
+  '[SCAN] Quét playlist nhạc Vocaloid ... 1.204 bài',
+  '[SCAN] Quét lịch sử tìm kiếm ... nạn nhân đã tự xóa vội',
+  '[SCAN] Dò tín hiệu "nakama" ... 3 kết quả khớp',
+  '[SCAN] Phát hiện wibu đang cất giấu body pillow 🛌',
+  '[SYS] MỤC TIÊU ĐÃ KHÓA. CHUẨN BỊ TÀN THÁNH.',
+];
+
+/* ================= STATE ================= */
+let score = 0, combo = 0, bestCombo = 0, misses = 0, kills = 0;
+let playing = false, spawnTimer = null, clockTimer = null, bossTimers = [];
+
+function show(id){ $(id).classList.remove('hidden'); }
+function hide(id){ $(id).classList.add('hidden'); }
+function shakeScreen(){
+  document.body.classList.remove('shake');
+  void document.body.offsetWidth;
+  document.body.classList.add('shake');
+}
+function updateHud(){
+  $('#scoreBox').textContent = 'ĐIỂM: ' + score;
+  $('#comboBox').textContent = 'COMBO: x' + combo;
+  $('#missBox').textContent = 'TRỐN THOÁT: ' + misses;
+}
+
+/* ================= FX ================= */
+function particles(x, y){
+  const emojis = ['💥','✨','⚡','🔥','💢','⭐'];
+  for(let i=0;i<12;i++){
+    const p = document.createElement('span');
+    p.className = 'particle';
+    p.textContent = pick(emojis);
+    p.style.left = x+'px'; p.style.top = y+'px';
+    const dx = rand(-160,160), dy = rand(-160,120), rot = rand(-360,360), sc = rand(0.6,1.8);
+    p.animate([
+      { transform:'translate(0,0) scale(1) rotate(0deg)', opacity:1 },
+      { transform:`translate(${dx}px,${dy}px) scale(0) rotate(${rot}deg)`, opacity:0 }
+    ], { duration: rand(450,850), easing:'cubic-bezier(.1,.8,.3,1)' });
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 900);
+  }
+}
+function kanjiPop(x, y){
+  const k = document.createElement('div');
+  k.className = 'kanji';
+  k.textContent = '滅';
+  k.style.left = (x-40)+'px'; k.style.top = (y-60)+'px';
+  document.body.appendChild(k);
+  setTimeout(()=>k.remove(), 850);
+}
+function popText(x, y, text, color='#ffd166'){
+  const p = document.createElement('div');
+  p.className = 'popText';
+  p.textContent = text;
+  p.style.left = x+'px'; p.style.top = y+'px';
+  if(color) p.style.color = color;
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(), 950);
+}
+
+/* ================= PHASES ================= */
+async function scanPhase(){
+  hide('#intro'); show('#scan');
+  const log = $('#scanLog');
+  log.textContent = '';
+  for(const line of SCAN_LINES){
+    log.textContent += line + '\n';
+    (line.includes('MỤC TIÊU') || line.includes('PHÁT HIỆN')) ? sfx.alarm() : sfx.scan();
+    if(line.includes('PHÁT HIỆN')) addBlips();
+    await sleep(rand(550, 950));
+  }
+  await sleep(600);
+  hide('#scan');
+  huntPhase();
+}
+function addBlips(){
+  const radar = document.querySelector('.radar');
+  for(let i=0;i<5;i++){
+    const b = document.createElement('span');
+    b.className = 'blip';
+    b.style.left = rand(15,80)+'%';
+    b.style.top = rand(15,80)+'%';
+    b.style.animationDelay = (i*0.3)+'s';
+    radar.appendChild(b);
+  }
+}
+
+function huntPhase(){
+  show('#hunt'); show('#hud');
+  updateHud();
+  playing = true;
+  let timeLeft = 30;
+  $('#timerBox').textContent = '⏱ ' + timeLeft + 's';
+  clockTimer = setInterval(()=>{
+    timeLeft--;
+    $('#timerBox').textContent = '⏱ ' + timeLeft + 's';
+    if(timeLeft <= 5) $('#timerBox').style.color = '#ff5555';
+    if(timeLeft <= 0){ clearInterval(clockTimer); endHunt(); }
+  }, 1000);
+  const spawn = () => {
+    if(!playing) return;
+    spawnTarget();
+    spawnTimer = setTimeout(spawn, rand(550, 1100));
+  };
+  spawn();
+}
+function spawnTarget(){
+  const w = pick(WIBUS);
+  const t = document.createElement('button');
+  t.className = 'target';
+  t.innerHTML = `<span class="emoji">${w.e}</span><span class="name">${w.n}</span>`;
+  const bf = $('#battlefield');
+  const pad = 40;
+  const x = rand(pad, window.innerWidth - 190);
+  const y = rand(120, window.innerHeight - 140);
+  t.style.left = x+'px'; t.style.top = y+'px';
+  t.addEventListener('click', ev => { ev.stopPropagation(); killTarget(t, ev.clientX, ev.clientY); });
+  bf.appendChild(t);
+  setTimeout(()=>{
+    if(t.isConnected && playing){
+      t.classList.add('escaped');
+      misses++; combo = 0; updateHud();
+      popText(x+40, y+10, 'WIBU TRỐN THOÁT 😭', '#ff5555');
+      sfx.miss();
+      setTimeout(()=>t.remove(), 300);
+    }
+  }, 2500);
+}
+function killTarget(t, cx, cy){
+  if(!playing || !t.isConnected) return;
+  const r = t.getBoundingClientRect();
+  particles(r.left + r.width/2, r.top + r.height/2);
+  kanjiPop(cx, cy);
+  combo++; bestCombo = Math.max(bestCombo, combo); kills++;
+  const gain = 100 * Math.max(1, combo);
+  score += gain;
+  updateHud();
+  popText(cx - 40, cy - 30, `+${gain}  ${pick(KILL_PHRASES)}`);
+  sfx.pew(); sfx.boom();
+  shakeScreen();
+  t.remove();
+}
+function endHunt(){
+  playing = false;
+  clearTimeout(spawnTimer);
+  document.querySelectorAll('.target').forEach(el=>el.remove());
+  hide('#hunt');
+  bossPhase();
+}
+
+/* ================= BOSS ================= */
+function bossPhase(){
+  show('#boss'); show('#bossName'); show('#bossHpWrap'); show('#bossEmoji');
+  const boss = $('#bossEmoji');
+  let hp = 50; const maxHp = 50;
+  $('#bossHpFill').style.width = '100%';
+  sfx.alarm();
+
+  // di chuyển boss
+  const mover = setInterval(()=>{
+    const x = rand(15, window.innerWidth - 120);
+    const y = rand(200, window.innerHeight - 160);
+    boss.style.left = x+'px'; boss.style.top = y+'px';
+  }, 900);
+  // boss phản công
+  const attacker = setInterval(()=>{
+    if(combo > 0){ combo = 0; score = Math.max(0, score - 300); updateHud(); }
+    popText(rand(100, window.innerWidth-200), rand(200, window.innerHeight-150), 'BOSS NÉ! -COMBO 😾', '#ff5555');
+    shakeScreen(); sfx.miss();
+  }, 2200);
+  bossTimers = [mover, attacker];
+
+  boss.onclick = () => {
+    const dmg = Math.floor(rand(2, 5));
+    hp = Math.max(0, hp - dmg);
+    $('#bossHpFill').style.width = (hp/maxHp*100) + '%';
+    kills++;
+    score += 250; combo++; bestCombo = Math.max(bestCombo, combo); updateHud();
+    const r = boss.getBoundingClientRect();
+    particles(r.left + r.width/2, r.top + r.height/2);
+    popText(r.left + 30, r.top, `-${dmg} HP  ${pick(KILL_PHRASES)}`);
+    boss.classList.add('bossHit');
+    setTimeout(()=>boss.classList.remove('bossHit'), 100);
+    sfx.pew();
+    shakeScreen();
+    if(hp <= 0){
+      clearInterval(mover); clearInterval(attacker);
+      boss.onclick = null;
+      sfx.bigBoom();
+      particles(r.left + r.width/2, r.top + r.height/2);
+      particles(r.left + 60, r.top + 60);
+      particles(r.left + 100, r.top + 20);
+      shakeScreen();
+      hide('#boss'); hide('#bossName'); hide('#bossHpWrap'); hide('#bossEmoji');
+      setTimeout(twistPhase, 900);
+    }
+  };
+}
+
+/* ================= TWIST ================= */
+async function twistPhase(){
+  show('#twist');
+  const txt = $('#twistText');
+  const lines = [
+    ['⚔️ CHIẾN TRẬN KẾT THÚC ⚔️', '#00f0ff'],
+    [`Đã xóa sổ: ${kills} wibu • Combo cao nhất: x${bestCombo} • Điểm: ${score}`, '#d8f6ff'],
+    ['NHƯNG...', '#ffd166'],
+    ['RADA PHÁT HIỆN CÒN 1 WIBU SỐNG SÓT...', '#ff2d75'],
+    ['VỊ TRÍ: NGAY TRƯỚC MÀN HÌNH BẠN ĐANG NHÌN 👀', '#ff2d75'],
+    ['NGHI PHẠM: CHÍNH LÀ BẠN 😱', '#ff2d75'],
+  ];
+  for(const [line, color] of lines){
+    const div = document.createElement('div');
+    div.textContent = line; div.style.color = color;
+    txt.appendChild(div);
+    (color === '#ff2d75') ? sfx.alarm() : sfx.click();
+    await sleep(1200);
+  }
+  await sleep(400);
+  const cd = $('#countdown'); show('#countdown');
+  for(let i=5; i>=1; i--){
+    cd.textContent = i;
+    sfx.count();
+    await sleep(1000);
+  }
+  cd.textContent = '💥';
+  sfx.bigBoom();
+  const f = $('#flash'); f.classList.add('go');
+  shakeScreen();
+  await sleep(1400);
+  hide('#countdown'); hide('#twistText');
+  $('#statLine').innerHTML =
+    `Tổng wibu đã "tiêu": <b>${kills}</b><br>` +
+    `Điểm thưởng dũng cảm tự nhận wibu: <b>+9999</b><br>` +
+    `Trạng thái: <b>Đã bị đuổi vào Isekai 🌏→🎏</b><br><br>` +
+    `Đừng buồn — wibu vẫn có waifu 2D yêu thương bạn :3`;
+  show('#finalMsg');
+  sfx.alarm();
+}
+
+/* ================= BOOT ================= */
+$('#startBtn').addEventListener('click', () => {
+  ctx(); // kích hoạt audio sau click đầu tiên
+  sfx.alarm();
+  resetGame();
+  scanPhase();
+});
+$('#replayBtn').addEventListener('click', () => {
+  sfx.click();
+  resetGame();
+  hide('#twist'); hide('#finalMsg');
+  scanPhase();
+});
+function resetGame(){
+  score = 0; combo = 0; bestCombo = 0; misses = 0; kills = 0;
+  $('#timerBox').style.color = '';
+  document.querySelectorAll('.target').forEach(el=>el.remove());
+  bossTimers.forEach(t=>clearInterval(t)); bossTimers = [];
+  $('#twistText').innerHTML = '';
+  $('#countdown').classList.add('hidden');
+  $('#finalMsg').classList.add('hidden');
+}
+</script>
+</body>
+</html>
