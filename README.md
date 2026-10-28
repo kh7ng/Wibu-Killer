@@ -1,4 +1,4 @@
-# ⚡ WIBU EXTERMINATOR 9000 ⚡
+# ⚡ WIBU KILLER ⚡
 
 > Hệ thống **HỦY DIỆT • XÓA SỔ • RỬA XỔ WIBU** phiên bản 9.0.0
 > *(Ứng dụng giải trí 100% — ⚡ WIBU KILLER ⚡ — Wibu CÓ TỘI :3)*
