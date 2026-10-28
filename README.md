@@ -12,7 +12,7 @@
 | 📡 **Quét rada** | Hệ thống dò tìm wibu trong khu vực (phát hiện 4.742 tập anime...) |
 | ⚔️ **Tàn sát (30s)** | Click vào wibu để **滅** tiêu diệt, combo càng cao điểm càng khủng |
 | 🦊 **Boss cuối** | ĐẠI TRƯỞNG LÃO HỘI WIBU — bay lượn + phản công, đấm 50 lần để hạ |
-| 😱 **Plot twist** | Wibu sống sót cuối cùng... chính là bạn |
+| 🏆 **Kết thúc** | Wibu bị tiêu diệt sạch 100% — chiến binh được vinh danh + hạng hiệu |
 
 ## ✨ Tính năng
 

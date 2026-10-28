@@ -95,13 +95,39 @@
     margin-top:22px; font-size:12px; letter-spacing:2px;
     color:#ffd166; opacity:.85; text-align:center; padding:0 20px;
   }
+  #intro{ padding:100px 16px 40px; }
+  .panel{
+    background:rgba(6,0,18,.72);
+    border:1px solid rgba(0,240,255,.35);
+    border-radius:18px;
+    padding:26px 30px 28px;
+    max-width:700px;
+    display:flex; flex-direction:column; align-items:center;
+    box-shadow:0 0 44px rgba(0,240,255,.14), inset 0 0 40px rgba(255,45,117,.05);
+  }
+  .obj-list{
+    margin-top:20px; align-self:stretch;
+    display:flex; flex-direction:column; gap:8px;
+    font-size:clamp(12px, 1.8vw, 14px); text-align:left;
+    color:#bfefff;
+    background:rgba(0,0,0,.35);
+    border:1px solid rgba(0,240,255,.2);
+    border-radius:12px; padding:14px 18px;
+  }
 
   /* ===== SCAN ===== */
+  #scan{ padding:110px 16px 24px; }
   .radar{
-    position:relative; width:min(46vmin, 320px); aspect-ratio:1;
+    position:relative; width:clamp(170px, 40vmin, 300px); aspect-ratio:1;
+    flex-shrink:0;
     border-radius:50%;
     border:2px solid var(--green);
-    box-shadow:0 0 30px rgba(57,255,20,.4), inset 0 0 30px rgba(57,255,20,.15);
+    background:radial-gradient(circle, rgba(57,255,20,.10), rgba(0,40,0,.25) 70%);
+    box-shadow:0 0 34px rgba(57,255,20,.45), inset 0 0 34px rgba(57,255,20,.18);
+  }
+  .radar::after{
+    content:''; position:absolute; inset:-9px; border-radius:50%;
+    border:1px solid rgba(57,255,20,.25);
   }
   .radar .ring{ position:absolute; inset:0; border-radius:50%; border:1px solid rgba(57,255,20,.4); }
   .radar .ring.r1{ inset:12%; } .radar .ring.r2{ inset:25%; } .radar .ring.r3{ inset:37.5%; }
@@ -111,25 +137,49 @@
   }
   .radar .cross::before{ left:50%; top:0; bottom:0; width:1px; }
   .radar .cross::after{ top:50%; left:0; right:0; height:1px; }
-  .radar .sweep{
+  .spinner{ position:absolute; inset:0; border-radius:50%; animation:spin 1.8s linear infinite; }
+  .sweep{
     position:absolute; inset:0; border-radius:50%;
-    background:conic-gradient(from 0deg, rgba(57,255,20,.65), transparent 70deg);
-    animation:spin 1.6s linear infinite;
+    background:conic-gradient(from 0deg, rgba(57,255,20,.55), rgba(57,255,20,.14) 55deg, transparent 80deg);
+  }
+  .edge{
+    position:absolute; left:50%; top:0; width:2px; height:50%;
+    transform:translateX(-50%); transform-origin:center bottom;
+    background:linear-gradient(180deg, #c8ffae, rgba(57,255,20,0));
+    box-shadow:0 0 8px rgba(57,255,20,.9);
+  }
+  .center-dot{
+    position:absolute; left:50%; top:50%; width:8px; height:8px;
+    transform:translate(-50%,-50%); border-radius:50%;
+    background:#b6ff9e; box-shadow:0 0 10px #39ff14;
   }
   @keyframes spin{ to{ transform:rotate(360deg);} }
   .blip{
     position:absolute; width:10px; height:10px; border-radius:50%;
     background:var(--neon); box-shadow:0 0 12px var(--neon);
-    animation:blipFade 1.6s linear infinite;
+    animation:blipFade 1.8s linear infinite;
   }
+  .blip::after{
+    content:''; position:absolute; inset:-7px; border-radius:50%;
+    border:1px solid var(--neon);
+    animation:ping 1.8s ease-out infinite;
+  }
+  @keyframes ping{ 0%{ transform:scale(.35); opacity:.9;} 100%{ transform:scale(2); opacity:0;} }
   @keyframes blipFade{ 0%{opacity:1;} 70%{opacity:1;} 100%{opacity:0;} }
   #scanLog{
-    margin-top:26px; width:min(92vw, 620px); height:180px;
-    overflow:hidden;
+    margin-top:22px; width:min(92vw, 620px);
+    height:clamp(84px, 20vh, 170px);
+    flex-shrink:1; overflow:hidden;
+    padding:12px 16px;
+    font-family:Consolas, 'Courier New', monospace;
     font-size:clamp(11px, 1.6vw, 14px);
     color:var(--green);
     text-shadow:0 0 6px rgba(57,255,20,.7);
     white-space:pre-wrap;
+    background:rgba(0, 30, 0, .28);
+    border:1px solid rgba(57,255,20,.3);
+    border-radius:12px;
+    box-shadow:inset 0 0 24px rgba(57,255,20,.08);
   }
 
   /* ===== HUNT ===== */
@@ -226,19 +276,16 @@
   .bossHit{ filter:drop-shadow(0 0 25px #fff) brightness(3) !important; }
 
   /* ===== TWIST ===== */
+  #twist{ padding:130px 16px 40px; justify-content:flex-start; }
   #twistText{
     text-align:center; font-size:clamp(16px, 3vw, 28px); font-weight:800;
     line-height:2; padding:0 24px; letter-spacing:1px;
     text-shadow:0 0 12px currentColor;
   }
-  #countdown{
-    margin-top:30px; font-size:clamp(60px, 12vw, 130px); font-weight:900;
-    color:#ff2d75; text-shadow:0 0 40px #ff2d75;
-  }
-  #finalMsg{ text-align:center; max-width:760px; padding:0 24px; }
+  #finalMsg{ text-align:center; max-width:760px; padding:0 24px; margin-top:20px; }
   #finalMsg .big{
     font-size:clamp(24px, 5vw, 44px); font-weight:900; letter-spacing:2px;
-    color:#ffd166; text-shadow:0 0 20px #ff8800; line-height:1.4;
+    color:#39ff14; text-shadow:0 0 24px #39ff14; line-height:1.4;
   }
   #finalMsg .stats{
     margin-top:18px; font-size:clamp(13px, 2vw, 17px); line-height:1.9; color:#d8f6ff;
@@ -252,6 +299,19 @@
     box-shadow:0 0 20px var(--cyan);
   }
   #replayBtn:hover{ transform:scale(1.05); }
+
+  .corner{ position:fixed; width:28px; height:28px; z-index:60; pointer-events:none; border:2px solid rgba(0,240,255,.45); }
+  .corner.tl{ top:8px; left:8px; border-right:0; border-bottom:0; border-radius:8px 0 0 0; }
+  .corner.tr{ top:8px; right:8px; border-left:0; border-bottom:0; border-radius:0 8px 0 0; }
+  .corner.bl{ bottom:8px; left:8px; border-right:0; border-top:0; border-radius:0 0 0 8px; }
+  .corner.br{ bottom:8px; right:8px; border-left:0; border-top:0; border-radius:0 0 8px 0; }
+
+  @media (max-width:640px){
+    h1.glitch{ letter-spacing:2px; }
+    .subtitle{ letter-spacing:1px; font-size:10px; }
+    .panel{ padding:18px 14px 20px; }
+    .hud-item{ padding:4px 8px; font-size:11px; }
+  }
 
   #muteBtn{
     position:fixed; bottom:14px; right:14px; z-index:60;
@@ -290,15 +350,23 @@
   <main id="stage">
     <!-- INTRO -->
     <section id="intro">
-      <p class="desc">
-        🚨 <b>CẢNH BÁO CẤP ĐỘ RED</b> 🚨<br>
-        Hệ thống đã phát hiện <b>số lượng wibu tăng vọt</b> trong khu vực.<br>
-        Nhiệm vụ của bạn: <b>quét rada → tiêu diệt → xóa sổ</b> mọi wibu lùn lũn<br>
-        trước khi chúng kịp gọi ai là "senpai".<br><br>
-        ⚔️ Sẵn sàng chưa, Chiến Binh 3D?
-      </p>
-      <button id="startBtn">🚨 KÍCH HOẠT HỆ THỐNG HỦY DIỆT 🚨</button>
-      <div class="warning">※ Trách nhiệm pháp lý: Mọi wibu bị tiêu diệt sẽ được hồi sinh tại Isekai gần nhất.</div>
+      <div class="panel">
+        <p class="desc">
+          🚨 <b>CẢNH BÁO CẤP ĐỘ RED</b> 🚨<br>
+          Hệ thống đã phát hiện <b>số lượng wibu tăng vọt</b> trong khu vực.<br>
+          Nhiệm vụ của bạn: <b>quét rada → tiêu diệt → xóa sổ</b> mọi wibu lùn lũn<br>
+          trước khi chúng kịp gọi ai là "senpai".<br><br>
+          ⚔️ Sẵn sàng chưa, Chiến Binh 3D?
+        </p>
+        <div class="obj-list">
+          <div>📡 <b>Giai đoạn 1:</b> Rada quét wibu</div>
+          <div>⚔️ <b>Giai đoạn 2:</b> Tàn sát 30 giây — combo càng cao điểm càng lớn</div>
+          <div>🦊 <b>Giai đoạn 3:</b> Boss cuối — Đại Trưởng Lão Hội Wibu</div>
+          <div>🏆 <b>Kết thúc:</b> Vinh danh chiến binh tiêu diệt wibu</div>
+        </div>
+        <button id="startBtn">🚨 KÍCH HOẠT HỆ THỐNG HỦY DIỆT 🚨</button>
+        <div class="warning">※ Trách nhiệm pháp lý: Mọi wibu bị tiêu diệt sẽ được hồi sinh tại Isekai gần nhất.</div>
+      </div>
     </section>
 
     <!-- SCAN -->
@@ -306,7 +374,8 @@
       <div class="radar">
         <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
         <div class="cross"></div>
-        <div class="sweep"></div>
+        <div class="spinner"><div class="sweep"></div><div class="edge"></div></div>
+        <div class="center-dot"></div>
       </div>
       <pre id="scanLog"></pre>
     </section>
@@ -321,14 +390,13 @@
       <div id="bossWrap"></div>
     </section>
 
-    <!-- TWIST -->
+    <!-- TWIST: CHIẾN THẮNG -->
     <section id="twist" class="hidden">
       <div id="twistText"></div>
-      <div id="countdown" class="hidden"></div>
       <div id="finalMsg" class="hidden">
-        <div class="big">💥 HỦY DIỆT THẤT BẠI 💥<br>KẾT LUẬN: WIBU MÃI MÃI LÀ WIBU</div>
+        <div class="big">🏆 NHIỆM VỤ HOÀN THÀNH 🏆<br>WIBU ĐÃ BỊ TIÊU DIỆT SẠCH</div>
         <div class="stats" id="statLine"></div>
-        <button id="replayBtn">🔁 NẠP ĐẠN & CHƠI LẠI</button>
+        <button id="replayBtn">🔁 QUÉT LẠI KHU VỰC</button>
       </div>
     </section>
   </main>
@@ -338,6 +406,10 @@
   <div id="bossEmoji" class="hidden">🦊</div>
 
   <footer>Ứng dụng giải trí 100% — Không wibu nào bị tổn hại thật. ⚡ WIBU KILLER ⚡ — Wibu CÓ TỘI :3</footer>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
   <button id="muteBtn" title="Bật/tắt âm thanh">🔊</button>
   <div id="scanlines"></div>
 
@@ -391,6 +463,12 @@ const sfx = {
   alarm(){ tone(880, 880, 0.15, 'square', 0.2); setTimeout(()=>tone(660, 660, 0.15, 'square', 0.2), 180); },
   click(){ tone(900, 900, 0.05, 'square', 0.12); },
   count(){ tone(600, 600, 0.12, 'square', 0.25); },
+  win(){
+    tone(523, 523, 0.12, 'square', 0.2);
+    setTimeout(()=>tone(659, 659, 0.12, 'square', 0.2), 120);
+    setTimeout(()=>tone(784, 784, 0.12, 'square', 0.2), 240);
+    setTimeout(()=>tone(1047, 1047, 0.35, 'square', 0.25), 380);
+  },
   scan(){ tone(300, 900, 0.2, 'sine', 0.08); },
 };
 $('#muteBtn').addEventListener('click', () => {
@@ -626,45 +704,47 @@ function bossPhase(){
   };
 }
 
-/* ================= TWIST ================= */
+/* ================= KẾT: CHIẾN THẮNG ================= */
+function fireworks(times=10){
+  let i = 0;
+  const iv = setInterval(()=>{
+    particles(rand(80, window.innerWidth-80), rand(140, window.innerHeight*0.6));
+    sfx.pew();
+    if(++i >= times) clearInterval(iv);
+  }, 320);
+}
 async function twistPhase(){
   show('#twist');
   const txt = $('#twistText');
+  sfx.win();
   const lines = [
     ['⚔️ CHIẾN TRẬN KẾT THÚC ⚔️', '#00f0ff'],
-    [`Đã xóa sổ: ${kills} wibu • Combo cao nhất: x${bestCombo} • Điểm: ${score}`, '#d8f6ff'],
-    ['NHƯNG...', '#ffd166'],
-    ['RADA PHÁT HIỆN CÒN 1 WIBU SỐNG SÓT...', '#ff2d75'],
-    ['VỊ TRÍ: NGAY TRƯỚC MÀN HÌNH BẠN ĐANG NHÌN 👀', '#ff2d75'],
-    ['NGHI PHẠM: CHÍNH LÀ BẠN 😱', '#ff2d75'],
+    ['✅ WIBU ĐÃ BỊ TIÊU DIỆT SẠCH 100%', '#39ff14'],
+    ['Khu vực an toàn tuyệt đối. Không còn ai dám gọi "senpai" nữa.', '#d8f6ff'],
+    ['🎉 DŨNG CẢM HẾT NẤC, CHIẾN BINH WIBU KILLER! 🎉', '#ffd166'],
   ];
   for(const [line, color] of lines){
     const div = document.createElement('div');
     div.textContent = line; div.style.color = color;
     txt.appendChild(div);
-    (color === '#ff2d75') ? sfx.alarm() : sfx.click();
-    await sleep(1200);
+    (color === '#39ff14') ? sfx.alarm() : sfx.click();
+    await sleep(1100);
   }
-  await sleep(400);
-  const cd = $('#countdown'); show('#countdown');
-  for(let i=5; i>=1; i--){
-    cd.textContent = i;
-    sfx.count();
-    await sleep(1000);
-  }
-  cd.textContent = '💥';
-  sfx.bigBoom();
-  const f = $('#flash'); f.classList.add('go');
-  shakeScreen();
-  await sleep(1400);
-  hide('#countdown'); hide('#twistText');
+  fireworks(10);
+  await sleep(1500);
+  hide('#twistText');
+  let rank = '🥉 THỢ SĂN WIBU TẬP SỰ';
+  if(kills >= 18) rank = '🥈 HIỆP SĨ TIÊU DIỆT WIBU';
+  if(kills >= 28) rank = '🥇 ĐẠI TRƯỞNG LÃO SĂN WIBU';
+  if(kills >= 40 && misses <= 5) rank = '👑 HỦY DIỆT SỨ THỨ NHẤT';
   $('#statLine').innerHTML =
-    `Tổng wibu đã "tiêu": <b>${kills}</b><br>` +
-    `Điểm thưởng dũng cảm tự nhận wibu: <b>+9999</b><br>` +
-    `Trạng thái: <b>Đã bị đuổi vào Isekai 🌏→🎏</b><br><br>` +
-    `Đừng buồn — wibu vẫn có waifu 2D yêu thương bạn :3`;
+    `Hạng hiệu: <b style="color:#ffd166">${rank}</b><br>` +
+    `Wibu đã tiêu diệt sạch: <b>${kills}</b> 🎯<br>` +
+    `Combo cao nhất: <b>x${bestCombo}</b> • Wibu trốn thoát: <b>${misses}</b><br>` +
+    `Tổng điểm chiến công: <b>${score}</b> ⚡<br><br>` +
+    `Cảm ơn chiến binh — nhờ bạn, khu phố này hết tiếng "sugoi" ngoài đời thật rồi! :3`;
   show('#finalMsg');
-  sfx.alarm();
+  sfx.win();
 }
 
 /* ================= BOOT ================= */
@@ -686,7 +766,6 @@ function resetGame(){
   document.querySelectorAll('.target').forEach(el=>el.remove());
   bossTimers.forEach(t=>clearInterval(t)); bossTimers = [];
   $('#twistText').innerHTML = '';
-  $('#countdown').classList.add('hidden');
   $('#finalMsg').classList.add('hidden');
 }
 </script>
