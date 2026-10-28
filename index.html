@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f6fa">
 <title>⚡ WIBU KILLER ⚡</title>
 <script>try{ if(localStorage.getItem('wk-theme')==='dark') document.documentElement.classList.add('dark'); }catch(e){}</script>
 <style>
@@ -42,6 +43,11 @@
     color:var(--text);
     overflow:hidden;
     user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    overscroll-behavior:none;
     cursor:crosshair;
     transition:background .25s, color .25s;
   }
@@ -415,6 +421,41 @@
     .sign{ width:calc(50% - 6px); }
     footer{ font-size:11.5px; border-radius:14px; max-width:calc(100vw - 120px); }
   }
+  /* ===== ĐIỆN THOẠI ===== */
+  @media (max-width:480px){
+    header{ padding:8px 8px 8px; }
+    h1.glitch{ font-size:21px; letter-spacing:1.5px; }
+    h1.glitch::after{ height:3px; margin-top:4px; width:60%; }
+    .subtitle{ font-size:9px; letter-spacing:.5px; }
+    #hud{ display:grid; grid-template-columns:repeat(2, max-content); justify-content:center; gap:5px 10px; margin-top:6px; }
+    .hud-item{ padding:3px 10px; font-size:11px; border-radius:8px; }
+    .caution{ white-space:normal; line-height:1.45; font-size:10.5px; padding:6px 8px; }
+    .desc{ font-size:12.5px; }
+    .signs{ gap:8px; }
+    .sign{ width:calc(50% - 4px); padding:10px 8px 8px; }
+    .sign .ico{ width:38px; height:38px; font-size:20px; }
+    .sign b{ font-size:10px; }
+    .sign{ font-size:9.5px; }
+    .obj-list{ font-size:11.5px; padding:10px 12px; gap:6px; }
+    #startBtn{ font-size:15px; padding:13px 26px; }
+    .warning{ font-size:10px; }
+    .target{ padding:4px 8px; border-radius:10px; }
+    .target .emoji{ font-size:24px; }
+    .target .name{ font-size:9.5px; max-width:96px; }
+    #bossName{ font-size:13px; top:112px; letter-spacing:2px; }
+    #bossHpWrap{ width:84vw; top:138px; height:16px; }
+    #bossEmoji{ font-size:62px; }
+    .kanji{ font-size:42px; }
+    .popText{ font-size:12px; }
+    .tline{ font-size:13px; }
+    #finalMsg .big{ font-size:17px; }
+    #finalMsg .stats{ font-size:11.5px; padding:10px 12px; border-radius:12px; }
+    #replayBtn{ font-size:14px; padding:10px 22px; }
+    footer{ font-size:10px; padding:6px 12px; max-width:calc(100vw - 110px); }
+    #muteBtn, #themeBtn{ width:38px; height:38px; font-size:15px; bottom:10px; }
+    #themeBtn{ right:56px; }
+    .corner{ width:18px; height:18px; border-width:1.5px; }
+  }
 </style>
 </head>
 <body>
@@ -574,6 +615,8 @@ const themeBtn = $('#themeBtn');
 function applyTheme(t){
   document.documentElement.classList.toggle('dark', t === 'dark');
   themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+  const mt = document.querySelector('meta[name="theme-color"]');
+  if(mt) mt.content = (t === 'dark') ? '#0e1118' : '#f5f6fa'; // màu viền trình duyệt điện thoại
   try{ localStorage.setItem('wk-theme', t); }catch(e){}
 }
 themeBtn.addEventListener('click', () => {
@@ -723,12 +766,13 @@ function spawnTarget(){
   t.className = 'target';
   t.innerHTML = `<span class="emoji">${w.e}</span><span class="name">${w.n}</span>`;
   const bf = $('#battlefield');
-  const pad = 40;
-  const x = rand(pad, window.innerWidth - 190);
-  const y = rand(190, window.innerHeight - 140);
+  bf.appendChild(t);
+  // Tính vị trí SAU khi gắn vào DOM để biết đúng kích thước target (thích ứng mọi màn hình, kể cả điện thoại)
+  const tw = t.offsetWidth || 150, th = t.offsetHeight || 90;
+  const x = rand(12, Math.max(12, window.innerWidth - tw - 12));
+  const y = rand(190, Math.max(200, window.innerHeight - th - 24));
   t.style.left = x+'px'; t.style.top = y+'px';
   t.addEventListener('click', ev => { ev.stopPropagation(); killTarget(t, ev.clientX, ev.clientY); });
-  bf.appendChild(t);
   setTimeout(()=>{
     if(t.isConnected && playing){
       t.classList.add('escaped');
