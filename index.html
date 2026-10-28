@@ -100,7 +100,12 @@
   .hidden{ display:none !important; }
 
   /* ===== INTRO ===== */
-  #intro{ padding:130px 16px 60px; }
+  #intro, #scan, #twist{ overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+  #intro::-webkit-scrollbar, #scan::-webkit-scrollbar, #twist::-webkit-scrollbar{ width:10px; }
+  #intro::-webkit-scrollbar-thumb, #scan::-webkit-scrollbar-thumb, #twist::-webkit-scrollbar-thumb{
+    background:var(--border2); border-radius:8px; border:2px solid transparent; background-clip:content-box;
+  }
+  #intro{ padding:130px 16px 96px; justify-content:flex-start; }
   .panel{
     background:var(--panel);
     border:1px solid var(--border);
@@ -176,7 +181,7 @@
   }
 
   /* ===== SCAN ===== */
-  #scan{ padding:130px 16px 24px; }
+  #scan{ padding:130px 16px 40px; justify-content:safe center; }
   .radar{
     position:relative; width:clamp(170px, 40vmin, 300px); aspect-ratio:1;
     flex-shrink:0;
