@@ -134,8 +134,8 @@
 
   /* ===== HUNT ===== */
   #hud{
-    position:fixed; top:70px; left:0; right:0; z-index:20;
-    display:flex; justify-content:center; gap:clamp(10px, 3vw, 34px);
+    margin-top:10px;
+    display:flex; justify-content:center; flex-wrap:wrap; gap:clamp(10px, 3vw, 34px);
     font-size:clamp(12px, 2vw, 18px); font-weight:800; letter-spacing:1px;
     pointer-events:none;
   }
@@ -197,12 +197,12 @@
   /* ===== BOSS ===== */
   #bossWrap{ position:absolute; inset:0; }
   #bossName{
-    position:fixed; top:120px; left:0; right:0; text-align:center; z-index:22;
+    position:fixed; top:148px; left:0; right:0; text-align:center; z-index:22;
     font-size:clamp(16px, 3vw, 28px); font-weight:900; letter-spacing:4px;
     color:#ff2d75; text-shadow:0 0 16px #ff2d75; pointer-events:none;
   }
   #bossHpWrap{
-    position:fixed; top:160px; left:50%; transform:translateX(-50%);
+    position:fixed; top:190px; left:50%; transform:translateX(-50%);
     width:min(70vw, 520px); height:22px; z-index:22;
     border:2px solid #fff; border-radius:12px; overflow:hidden;
     background:rgba(0,0,0,.6); box-shadow:0 0 16px rgba(255,45,117,.6);
@@ -278,6 +278,13 @@
   <header>
     <h1 class="glitch" data-text="WIBU EXTERMINATOR 9000">WIBU EXTERMINATOR 9000</h1>
     <div class="subtitle">HỆ THỐNG HỦY DIỆT • XÓA SỔ • RỬA XỔ WIBU — PHIÊN BẢN 9.0.0</div>
+    <!-- HUD (hiện khi battle) — nằm trong header để không bao giờ đè lên tiêu đề -->
+    <div id="hud" class="hidden">
+      <div class="hud-item" id="scoreBox">ĐIỂM: 0</div>
+      <div class="hud-item" id="comboBox">COMBO: x0</div>
+      <div class="hud-item" id="missBox">TRỐN THOÁT: 0</div>
+      <div class="hud-item" id="timerBox">⏱ 30s</div>
+    </div>
   </header>
 
   <main id="stage">
@@ -326,19 +333,11 @@
     </section>
   </main>
 
-  <!-- HUD (hiện khi battle) -->
-  <div id="hud" class="hidden">
-    <div class="hud-item" id="scoreBox">ĐIỂM: 0</div>
-    <div class="hud-item" id="comboBox">COMBO: x0</div>
-    <div class="hud-item" id="missBox">TRỐN THOÁT: 0</div>
-    <div class="hud-item" id="timerBox">⏱ 30s</div>
-  </div>
-
   <div id="bossName" class="hidden">☠️ BOSS CUỐI: ĐẠI TRƯỞNG LÃO HỘI WIBU ☠️</div>
   <div id="bossHpWrap" class="hidden"><div id="bossHpFill"></div></div>
   <div id="bossEmoji" class="hidden">🦊</div>
 
-  <footer>Ứng dụng giải trí 100% — Không wibu nào bị tổn hại thật. Wibu không có tội, wibu chỉ có waifu :3</footer>
+  <footer>Ứng dụng giải trí 100% — Không wibu nào bị tổn hại thật. ⚡ WIBU KILLER ⚡ — Wibu CÓ TỘI :3</footer>
   <button id="muteBtn" title="Bật/tắt âm thanh">🔊</button>
   <div id="scanlines"></div>
 
@@ -541,7 +540,7 @@ function spawnTarget(){
   const bf = $('#battlefield');
   const pad = 40;
   const x = rand(pad, window.innerWidth - 190);
-  const y = rand(120, window.innerHeight - 140);
+  const y = rand(190, window.innerHeight - 140);
   t.style.left = x+'px'; t.style.top = y+'px';
   t.addEventListener('click', ev => { ev.stopPropagation(); killTarget(t, ev.clientX, ev.clientY); });
   bf.appendChild(t);
@@ -579,6 +578,7 @@ function endHunt(){
 
 /* ================= BOSS ================= */
 function bossPhase(){
+  hide('#hud'); // HUD nằm trong header, ẩn đi để không chật phần trên
   show('#boss'); show('#bossName'); show('#bossHpWrap'); show('#bossEmoji');
   const boss = $('#bossEmoji');
   let hp = 50; const maxHp = 50;

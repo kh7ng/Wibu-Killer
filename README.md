@@ -1,7 +1,7 @@
 # ⚡ WIBU EXTERMINATOR 9000 ⚡
 
 > Hệ thống **HỦY DIỆT • XÓA SỔ • RỬA XỔ WIBU** phiên bản 9.0.0
-> *(Ứng dụng giải trí 100% — wibu không có tội, wibu chỉ có waifu :3)*
+> *(Ứng dụng giải trí 100% — ⚡ WIBU KILLER ⚡ — Wibu CÓ TỘI :3)*
 
 🎮 **Chơi ngay:** mở file `index.html` bằng bất kỳ trình duyệt nào (Chrome / Edge / Firefox), hoặc bật GitHub Pages để chơi online.
 
