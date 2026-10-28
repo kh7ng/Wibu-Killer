@@ -386,9 +386,17 @@
   #muteBtn{ right:14px; } #themeBtn{ right:66px; }
 
   footer{
-    position:fixed; bottom:10px; left:0; right:0; z-index:10;
-    text-align:center; font-size:11px; color:var(--text-soft); letter-spacing:.5px;
-    pointer-events:none; padding:0 70px;
+    position:fixed; bottom:12px; left:50%; transform:translateX(-50%);
+    z-index:10; max-width:calc(100vw - 140px);
+    font-size:13px; font-weight:600; line-height:1.45;
+    color:var(--text); text-align:center;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:8px 20px;
+    box-shadow:var(--shadow);
+    pointer-events:none;
+    transition:background .25s;
   }
 
   @media (max-width:640px){
@@ -397,6 +405,7 @@
     .panel{ padding:18px 14px 20px; }
     .hud-item{ padding:4px 8px; font-size:11px; }
     .sign{ width:calc(50% - 6px); }
+    footer{ font-size:11.5px; border-radius:14px; max-width:calc(100vw - 120px); }
   }
 </style>
 </head>
